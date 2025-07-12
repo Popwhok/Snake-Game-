@@ -3,7 +3,11 @@
 #include <conio.h>
 #include <ctime>
 #include <windows.h>
-
+enum Difficulty
+{
+    Easy = 300,
+    Hard = 400
+};
 using namespace std;
 class Game
 {
@@ -12,17 +16,22 @@ private:
      deque<pair<int, int>> snake = { {5, 3} };
      pair<int, int> food ;
      int direction = 'd';
+     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
 
      
 public:
-    Game(int h, int w) : height(h), width(w)
+    Game(int h, int w) 
     {
+        height = h;
+        width = w;
         srand(time(0));
         food = { rand() % height + 1, rand() % width + 1 };
     }
+    void Menu();
     void SnakeMap();
     void MoveSnake();
-    bool gameOver = false;
+    bool gameOver;
     int score = 0;
     
 };
@@ -45,8 +54,11 @@ void Game::SnakeMap()
             {
                 if (el.first == i && el.second == j)
                 {
-                    cout << "O";
-                    isSnake = true;
+                    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
+                    std::cout << "O";
+                    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+                              
+                          isSnake = true;
                     
                 }
                 
@@ -55,9 +67,15 @@ void Game::SnakeMap()
             if (!isSnake)
             {
                 if (food.first == i && food.second == j)
+                {
+                    SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
                     cout << "@";
+                    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+                }
                 else
+                {
                     cout << " ";
+                }
             }
         }
         cout << "#" << endl;
@@ -91,13 +109,18 @@ void Game::MoveSnake()
     
     if (head.first <= 0 || head.first >height || head.second <=0 || head.second >width)
     {
-        gameOver = true;
+            gameOver = true;
+            system("cls");
+            cout << "GAME OVER" << endl;
+            
     }
     for (auto snake : snake)
     {
         if (snake.first == head.first && snake.second == head.second)
         {
             gameOver = true;
+            system("cls");
+            cout << "GAME OVER" << endl;
         }
       
     }
@@ -118,23 +141,72 @@ void Game::MoveSnake()
     
 
 }
+void Game::Menu()
+{
+    
+      cout  << "1.Запустить игру" << endl
+            << "2.Выход" << endl;
+    int a;
+    cin >> a;
+    
+    switch (a)
+    {
+    case 1: 
+    {
+        cout << "Выберите сложность:" << endl
+            << "1.Агуша гейминг" << endl
+            << "2.Фанат боли" << endl;
+        int diff, ttime;
+        cin >> diff;
+        if (diff == 1)
+        {
+            ttime = Difficulty::Easy;
+        }
+        else if (diff == 2)
+        {
+            ttime = Difficulty::Hard;
+        }
+        else
+        {
+            cout << "ВЫБЕРИТЕ СЛОЖНОСТЬ!!!";
+        }
+        gameOver = false;
+        snake = { {5, 3} };
+        direction = 'd';
+        score = 0;
+            while (!gameOver) {
+                SnakeMap();
+                MoveSnake();
+                if (score == 20)
+                {
+                    Sleep(ttime+100);
+                }
+                else
+                {
+                    Sleep(ttime);
+                }
+                           
+            }
+            Menu();
+            
+           
+       
+       
+        break;
+    }
+    case 2: return; break;
+    }
 
+}
 
 int main()
 {
     setlocale(LC_ALL, "ru");
+    
     Game game(7, 20);
-    while (!game.gameOver) {
-        game.SnakeMap();
-        game.MoveSnake();
-        if (game.score ==20)
-        {
-            Sleep(400);
-        }
-        else
-        {
-            Sleep(300);
-        }
+    cout << "Вас приветсвует змейка!" << endl;
+    
         
-    }
+        game.Menu();
+   
 }
