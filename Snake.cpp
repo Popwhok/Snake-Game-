@@ -115,23 +115,28 @@ void Game::MoveSnake()
     
     if (head.first <= 0 || head.first >height || head.second <=0 || head.second >width)
     {
-            gameOver = true;
-            system("cls");
-            cout << "GAME OVER" << endl;
-            
-            if (score>record)
+        if (head.first <= 0 || head.first > height)
+        {
+            if (head.first <=0)
             {
-                record = score;
-                cout << "Вы побили свой рекорд!!!";
+                head.first = height;
             }
             else
             {
-                cout << "Рекорд на данный момент = " << score;
+                head.first = 0;
             }
-            
-            res.open("record.txt");
-            res << "Рекорд: " << record;
-            res.close();
+        }
+        if (head.second <= 0 || head.second > width)
+        {
+            if (head.second <=0)
+            {
+                head.second = width;
+            }
+            else
+            {
+                head.second = 0;
+            }
+        }
             
     }
     for (auto snake : snake)
