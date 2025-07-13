@@ -35,13 +35,7 @@ public:
         
 
     }
-    Game(int h, int w) 
-    {
-        height = h;
-        width = w;
-        srand(time(0));
-        
-    }
+    
     void Menu();
     void SnakeMap();
     void MoveSnake();
@@ -159,7 +153,7 @@ void Game::MoveSnake()
             }
             
             res.open("record.txt");
-            res << "Рекорд: " << record;
+            res << "Best score: " << record;
             res.close();
         }
       
