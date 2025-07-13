@@ -3,12 +3,15 @@
 #include <conio.h>
 #include <ctime>
 #include <windows.h>
+#include <fstream>
+
+using namespace std;
+
 enum Difficulty
 {
     Easy = 300,
     Hard = 400
 };
-using namespace std;
 class Game
 {
 private:
@@ -17,25 +20,34 @@ private:
      pair<int, int> food ;
      int direction = 'd';
      HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
+     int record = 0;
+     bool gameOver;
+     int score = 0;
+     ofstream res;
 
      
 public:
+    Game()
+    {
+        height = 0;
+        width = 0;
+        srand(time(0));
+        
+
+    }
     Game(int h, int w) 
     {
         height = h;
         width = w;
         srand(time(0));
-        food = { rand() % height + 1, rand() % width + 1 };
+        
     }
     void Menu();
     void SnakeMap();
     void MoveSnake();
-    bool gameOver;
-    int score = 0;
+    
     
 };
-
 void Game::SnakeMap()
 {
     system("cls");
@@ -113,6 +125,20 @@ void Game::MoveSnake()
             system("cls");
             cout << "GAME OVER" << endl;
             
+            if (score>record)
+            {
+                record = score;
+                cout << "Вы побили свой рекорд!!!";
+            }
+            else
+            {
+                cout << "Рекорд на данный момент = " << score;
+            }
+            
+            res.open("record.txt");
+            res << "Рекорд: " << record;
+            res.close();
+            
     }
     for (auto snake : snake)
     {
@@ -121,6 +147,20 @@ void Game::MoveSnake()
             gameOver = true;
             system("cls");
             cout << "GAME OVER" << endl;
+            
+            if (score > record)
+            {
+                record = score;
+                cout << "Вы побили свой рекорд!!!" << endl;
+            }
+            else
+            {
+                cout << "Рекорд на данный момент = " << score << endl;
+            }
+            
+            res.open("record.txt");
+            res << "Рекорд: " << record;
+            res.close();
         }
       
     }
@@ -144,7 +184,7 @@ void Game::MoveSnake()
 void Game::Menu()
 {
     
-      cout  << "1.Запустить игру" << endl
+      cout  << endl << "1.Запустить игру" << endl
             << "2.Выход" << endl;
     int a;
     cin >> a;
@@ -160,16 +200,23 @@ void Game::Menu()
         cin >> diff;
         if (diff == 1)
         {
+            height = 10;
+            width = 20;
+         
             ttime = Difficulty::Easy;
         }
         else if (diff == 2)
         {
+            height = 7;
+            width = 17;
+            
             ttime = Difficulty::Hard;
         }
         else
         {
             cout << "ВЫБЕРИТЕ СЛОЖНОСТЬ!!!";
         }
+        food = { rand() % height + 1, rand() % width + 1 };
         gameOver = false;
         snake = { {5, 3} };
         direction = 'd';
@@ -203,10 +250,8 @@ int main()
 {
     setlocale(LC_ALL, "ru");
     
-    Game game(7, 20);
+    Game game;
     cout << "Вас приветсвует змейка!" << endl;
-    
-        
-        game.Menu();
+    game.Menu();
    
 }
