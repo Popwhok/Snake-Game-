@@ -151,15 +151,16 @@ void Game::MoveSnake()
             {
                 record = score;
                 cout << "Вы побили свой рекорд!!!" << endl;
+                res.open("record.txt");
+                res << "Best score: " << record;
+                res.close();
             }
             else
             {
                 cout << "Рекорд на данный момент = " << score << endl;
             }
             
-            res.open("record.txt");
-            res << "Best score: " << record;
-            res.close();
+            
         }
       
     }
